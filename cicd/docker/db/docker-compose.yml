@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  db:
+    image: postgres:11.5
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: issuedex-pass
+      POSTGRES_USER: issuedex-user
+      POSTGRES_DB: issuedex-db

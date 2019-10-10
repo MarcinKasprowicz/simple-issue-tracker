@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+    Environment:
+        Type: String
+        Default: dev
+        AllowedValues:
+            - dev
+            - prod
+    AppName:
+        Type: String
+
+Resources:
+    AssetsS3Bucket:
+        Type: 'AWS::S3::Bucket'
+        Properties:
+            BucketName: !Sub ${Environment}-${AppName}-assets-bucket
+            AccessControl: PublicRead
+            CorsConfiguration:
+                CorsRules:
+                    -   AllowedHeaders:
+                            - '*'
+                        AllowedMethods:
+                            - 'PUT'
+                        AllowedOrigins:
+                            - '*'
+    
+    AssetsS3BucketPolicy:
+        Type: AWS::S3::BucketPolicy
+        Properties:
+            PolicyDocument:
+                Id: AssetsS3BucketPolicy
+                Version: 2012-10-17
+                Statement:
+                    -   Sid: PublicReadForGetBucketObjects
+                        Effect: Allow
+                        Principal: '*'
+                        Action: 's3:GetObject'
+                        Resource: !Join 
+                            - ''
+                            -   - 'arn:aws:s3:::'
+                                - !Ref AssetsS3Bucket
+                                - /*
+            Bucket: !Ref AssetsS3Bucket
+
+Outputs:
+  S3BucketSecureURL:
+    Value: !Join 
+      - ''
+      - - 'https://'
+        - !GetAtt 
+          - AssetsS3Bucket
+          - DomainName  
