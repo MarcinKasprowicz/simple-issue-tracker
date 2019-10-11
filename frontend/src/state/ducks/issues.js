@@ -1,19 +1,10 @@
-import {
-  put,
-  takeLatest,
-  fork,
-  call,
-  take,
-  select,
-  race,
-} from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 import * as api from '../../services/api.service';
 
 // Actions
 export const MAKE_REQUEST = 'issuedex/issues/MAKE_REQUEST';
 export const REQUEST_SUCCESS = 'issuedex/issues/REQUEST_SUCCESS';
 export const REQUEST_FAILURE = 'issuedex/issues/REQUEST_FAILURE';
-
 export const LOAD = 'issuedex/issues/LOAD';
 export const CLEAR = 'issuedex/issues/CLEAR';
 export const LOADED = 'issuedex/issues/LOADED';
@@ -25,7 +16,6 @@ export const CREATED = 'issuedex/issues/CREATED';
 export const UPDATED = 'issuedex/issues/UPDATED';
 export const DELETE = 'issuedex/issues/DELETE';
 export const DELETED = 'issuedex/issues/DELETED';
-
 export const UPDATE_LIST = 'issuedex/issues/UPDATE_LIST';
 
 // Reducer
@@ -42,7 +32,7 @@ export default (state = [], action) => {
 
 // Action Creators
 export const add = () => ({ type: ADD });
-export const save = (issue) => ({ type: SAVE, issue });
+export const save = issue => ({ type: SAVE, issue });
 export const destroy = issue => ({ type: DELETE, issue });
 export const load = projectId => ({ type: LOAD, projectId });
 export const clear = () => ({ type: CLEAR });
@@ -80,8 +70,30 @@ function* deleteSaga(action) {
   yield put(updateList(issues.filter(i => i.id !== issue.id)));
 }
 
+function* startSaga(action) {
+  const { issue } = action;
+  const issues = yield select(getIssues);
+  const json = yield call(api.updateIssue, issue.projectId, issue.id, {
+    ...issue,
+    state: 'PENDING',
+  });
+  yield put(updateList(issues.map(i => (i.id === issue.id ? json : i))));
+}
+
+function* closeSaga(action) {
+  const { issue } = action;
+  const issues = yield select(getIssues);
+  const json = yield call(api.updateIssue, issue.projectId, issue.id, {
+    ...issue,
+    state: 'CLOSED',
+  });
+  yield put(updateList(issues.map(i => (i.id === issue.id ? json : i))));
+}
+
 export const saga = [
   takeLatest(SAVE, saveSaga),
   takeLatest(LOAD, loadSaga),
   takeLatest(DELETE, deleteSaga),
+  takeLatest(START, startSaga),
+  takeLatest(CLOSE, closeSaga),
 ];

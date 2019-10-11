@@ -2,7 +2,10 @@
   "name": "issuedex-gui",
   "version": "0.0.0",
   "dependencies": {
+    "faker": "^4.1.0",
     "grommet": "^2.7.9",
+    "grommet-icons": "^4.3.0",
+    "grommet-styles": "^0.2.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",

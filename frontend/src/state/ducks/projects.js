@@ -1,19 +1,10 @@
-import {
-  put,
-  takeLatest,
-  fork,
-  call,
-  take,
-  select,
-  race,
-} from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 import * as api from '../../services/api.service';
 
 // Actions
 export const MAKE_REQUEST = 'issuedex/projects/MAKE_REQUEST';
 export const REQUEST_SUCCESS = 'issuedex/projects/REQUEST_SUCCESS';
 export const REQUEST_FAILURE = 'issuedex/projects/REQUEST_FAILURE';
-
 export const LOAD = 'issuedex/projects/LOAD';
 export const CLEAR = 'issuedex/projects/CLEAR';
 export const LOADED = 'issuedex/projects/LOADED';
@@ -23,7 +14,6 @@ export const CREATED = 'issuedex/projects/CREATED';
 export const UPDATED = 'issuedex/projects/UPDATED';
 export const DELETE = 'issuedex/projects/DELETE';
 export const DELETED = 'issuedex/projects/DELETED';
-
 export const UPDATE_LIST = 'issuedex/projects/UPDATE_LIST';
 
 // Reducer

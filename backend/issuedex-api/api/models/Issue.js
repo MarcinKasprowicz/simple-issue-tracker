@@ -24,3 +24,4 @@ const Issue = sequelize.define('issue', {
 });
 
 module.exports = Issue;
+

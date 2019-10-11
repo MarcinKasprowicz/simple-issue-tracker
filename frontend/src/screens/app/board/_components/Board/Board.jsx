@@ -1,5 +1,15 @@
+import faker from 'faker';
+import { Box, Button, Image } from 'grommet';
+import { FormPreviousLink } from 'grommet-icons';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Column } from '../';
+import boardText from './board.png';
+
+const generateIssue = projectId => ({
+  projectId,
+  title: faker.company.catchPhrase(),
+  description: 'blabla',
+});
 
 class Board extends React.Component {
   componentDidMount() {
@@ -13,32 +23,48 @@ class Board extends React.Component {
   }
 
   render() {
-    const { issues, destroy, match, save } = this.props;
+    const { issues, destroy, match, save, history, start, close } = this.props;
     const projectId = match.params.id;
     return (
-      <div>
-        <div>Board</div>
-        <div>
-          <Link to="/projects">Back</Link>
-        </div>
-        {issues.map(issue => (
-          <div key={issue.id}>
-            <div>{issue.title}</div>
-            <div onClick={() => destroy(issue)}>DELETE ISSUE</div>
-          </div>
-        ))}
-        <div
-          onClick={() =>
-            save({
-              projectId,
-              title: 'super issue',
-              description: 'Opisek',
-            })
-          }
-        >
-          HAHA DODAJ NEXT
-        </div>
-      </div>
+      <Box>
+        <Box direction="row" align="center" justify="center">
+          <Button
+            icon={<FormPreviousLink size="large" />}
+            onClick={() => history.push('/projects')}
+          />
+          <Box align="center" pad="small">
+            <Image fit="cover" src={boardText} />
+          </Box>
+        </Box>
+        <Box margin={{ horizontal: 'large' }}>
+          <Box direction="row">
+            <Box basis="1/3">
+              <Column
+                name="Open"
+                issues={issues.filter(issue => issue.state === 'OPEN')}
+                add={() => save(generateIssue(projectId))}
+                destroy={destroy}
+                start={start}
+              ></Column>
+            </Box>
+            <Box basis="1/3">
+              <Column
+                name="Pending"
+                issues={issues.filter(issue => issue.state === 'PENDING')}
+                destroy={destroy}
+                close={close}
+              ></Column>
+            </Box>
+            <Box basis="1/3">
+              <Column
+                name="Closed"
+                issues={issues.filter(issue => issue.state === 'CLOSED')}
+                destroy={destroy}
+              ></Column>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     );
   }
 }

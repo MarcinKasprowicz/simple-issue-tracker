@@ -1,5 +1,13 @@
+import faker from 'faker';
+import { Box, Image } from 'grommet';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { AddProject, ProjectCard } from '../';
+import projectsText from './my-projects.png';
+
+const generateProject = () => ({
+  name: faker.random.word(),
+  description: faker.hacker.phrase(),
+});
 
 class Projects extends React.Component {
   componentDidMount() {
@@ -13,27 +21,29 @@ class Projects extends React.Component {
   }
 
   render() {
-    const { projects, destroy, save } = this.props;
+    const { projects, destroy, save, history } = this.props;
     return (
-      <div>
-        <div>Projects</div>
-        {projects.map(project => (
-          <div key={project.id}>
-            <Link to={`/board/project/${project.id}`}>{project.name}</Link>
-            <div onClick={() => destroy(project)}>DELETE ME</div>
-          </div>
-        ))}
-        <div
-          onClick={() =>
-            save({
-              name: 'no i kolejny',
-              description: 'JAJAJJ super opis',
-            })
-          }
-        >
-          A TUTAJ DODAM NOWY!!!!
-        </div>
-      </div>
+      <Box>
+        <Box align="center" pad="small">
+          <Image fit="cover" src={projectsText} />
+        </Box>
+        <Box margin={{ horizontal: 'large' }}>
+          <Box direction="row" wrap>
+            {projects.map(project => (
+              <Box key={project.id} basis="1/4">
+                <ProjectCard
+                  project={project}
+                  destroy={() => destroy(project)}
+                  go={() => history.push('/board/project/' + project.id)}
+                />
+              </Box>
+            ))}
+            <Box basis="1/4">
+              <AddProject add={() => save(generateProject())} />
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     );
   }
 }
